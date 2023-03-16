@@ -1,40 +1,45 @@
+//récupération de l'ID du produit de la page
+const paramsId = new URLSearchParams(window.location.search).get('id');
+console.log(paramsId);
+//récupération données de l'API
 async function fetchData(){
-    fetch("http://localhost:3000/api/products")
+    fetch("http://localhost:3000/api/products/" + paramsId)
     .then(response=>response.json())
-    .then(produceList=> {  
-        displayDatas(produceList)
+    .then(productDetails=> {  
+        displayDatas(productDetails)
     })
 }
-
-function displayDatas(produceList){
-    console.log(produceList)
-    // définir la section parent en js
-    // boucler sur datas (ici appelé produceList)
-    for(let i in produceList) {
-        //création constante product
-        const product = produceList[i];
-        
-                   
-        // créer et imbriquer l'élément img
-        const articleImg = document.querySelector(".item__img");
-        const imageProduct = document.createElement("img");
-        imageProduct.src = product.imageUrl;
-        imageProduct.alt = product.altTxt;
-        articleImg.appendChild(imageProduct);
-
-        // créer le contenu : h1 Title
-        const nameProduct = document.querySelector('#title');
-        nameProduct.innerText = product.name;
-
-        // créer le contenu : p span Price
-        const priceProduct = document.querySelector('#price');
-        priceProduct.innerText = product.price;
-
-        // créer le contenu : p Description
-        const descriptionProduct = document.querySelector('#description');
-        descriptionProduct.innerText = product.description;
-        
+function displayDatas(productDetails){
+    console.table(productDetails);
+    // création et imbrication l'élément img
+    const articleImg = document.querySelector(".item__img");
+    const imageProduct = document.createElement("img");
+    imageProduct.src = productDetails.imageUrl;
+    imageProduct.alt = productDetails.altTxt;
+    articleImg.appendChild(imageProduct);
+    // import du nom de la page dans balise title
+    const namePage = document.querySelector('Title');
+    namePage.innerText = "Kanap : " + productDetails.name + " " + productDetails.colors;
+    // import du contenu : h1 Title
+    const nameProduct = document.querySelector('#title');
+    nameProduct.innerText = productDetails.name;
+    // import du contenu : p span Price
+    const priceProduct = document.querySelector('#price');
+    priceProduct.innerText = productDetails.price;
+    // import du contenu : p Description
+    const descriptionProduct = document.querySelector('#description');
+    descriptionProduct.innerText = productDetails.description;
+    // création et imbrication de plusieurs éléments option avec boucle
+    const colorsList = productDetails.colors;
+    console.log(colorsList);
+    for(let i in colorsList){
+        const productColor = colorsList[i];
+        const selectColor = document.querySelector("#colors");
+        const colorOption = document.createElement("option");
+        colorOption.innerText = productColor;
+        selectColor.appendChild(colorOption);
     }
+
 }
 
 async function main(){
