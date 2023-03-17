@@ -9,6 +9,7 @@ async function fetchData(){
         displayDatas(productDetails)
     })
 }
+//import des données de la page d'accueil
 function displayDatas(productDetails){
     console.table(productDetails);
     // création et imbrication l'élément img
@@ -39,8 +40,16 @@ function displayDatas(productDetails){
         colorOption.innerText = productColor;
         selectColor.appendChild(colorOption);
     }
-
 }
+
+//export des données pour le panier
+//Bouton Panier
+const boutonPanier = document.querySelector("#addToCart");
+//actions de clic sur boutonPanier
+boutonPanier.addEventListener("click", function (){
+    
+})
+
 
 async function main(){
    await fetchData()
