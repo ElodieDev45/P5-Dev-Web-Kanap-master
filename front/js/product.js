@@ -47,7 +47,27 @@ function displayDatas(productDetails){
 const boutonPanier = document.querySelector("#addToCart");
 //actions de clic sur boutonPanier
 boutonPanier.addEventListener("click", function (){
-    
+    // récupérer la valeur de la couleur choisi
+    // récupéler la valeur de la quantité sélectionné
+    // SI ils sont vides on affiche un message d'alerte
+    // plus rien ne se passe apres
+    // SI les 2 valeurs sont bien sélectionnées
+    // alors on fait le reste du traitement
+    // on vérifie l'existence d'un panier présent dans le localstorage
+    // si il existe on récupère sa valeur et on stock cette valeur dans une cariable de type tableau
+    // qu'on nommera cart par exemple
+    // sinon on créé la variable avec pour valeur un tableau vide
+
+    // on parcours le tableau (ou on utilise la méthode .find) pour vérifier
+    // si on trouve dans celui-ci un produit ayant la meme id et meme couleur que celui qu'on a sélectionné
+    // SI IL N'EXISTE PAS
+    // on créé un object JS qui va comprendre les propriétés
+    // (id, couleur choisi, quantité selectionné)
+    // on le rajoute dans le tableau
+    // SI LE PRODUIT EXISTE (meme id et meme couleur)
+    // on incrémente simplement la quantité du produit dans le tableau
+    // on enregistre la variable tableau dans le localstorage
+    // (on redirige ou non vers la page caddie)
 })
 
 
