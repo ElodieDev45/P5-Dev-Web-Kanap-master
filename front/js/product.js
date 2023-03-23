@@ -1,9 +1,11 @@
 //récupération de l'ID du produit de la page
 const paramsId = new URLSearchParams(window.location.search).get('id');
-console.log(paramsId);
+const apiProduct = "http://localhost:3000/api/products/" + paramsId;
+console.log(apiProduct);
+
 //récupération données de l'API
 async function fetchData(){
-    fetch("http://localhost:3000/api/products/" + paramsId)
+    fetch(apiProduct)
     .then(response=>response.json())
     .then(productDetails=> {  
         displayDatas(productDetails)
@@ -20,16 +22,16 @@ function displayDatas(productDetails){
     articleImg.appendChild(imageProduct);
     // import du nom de la page dans balise title
     const namePage = document.querySelector('Title');
-    namePage.innerText = "Kanap : " + productDetails.name + " " + productDetails.colors;
+    namePage.innerHTML = "Kanap : " + productDetails.name + " " + productDetails.colors;
     // import du contenu : h1 Title
     const nameProduct = document.querySelector('#title');
-    nameProduct.innerText = productDetails.name;
+    nameProduct.innerHTML = productDetails.name;
     // import du contenu : p span Price
     const priceProduct = document.querySelector('#price');
-    priceProduct.innerText = productDetails.price;
+    priceProduct.innerHTML = productDetails.price;
     // import du contenu : p Description
     const descriptionProduct = document.querySelector('#description');
-    descriptionProduct.innerText = productDetails.description;
+    descriptionProduct.innerHTML = productDetails.description;
     // création et imbrication de plusieurs éléments option avec boucle
     const colorsList = productDetails.colors;
     console.log(colorsList);
@@ -37,16 +39,17 @@ function displayDatas(productDetails){
         const productColor = colorsList[i];
         const selectColor = document.querySelector("#colors");
         const colorOption = document.createElement("option");
-        colorOption.innerText = productColor;
+        colorOption.innerHTML = productColor;
         selectColor.appendChild(colorOption);
     }
 }
+// //export des données pour le panier
+// //Bouton Panier
+// const boutonPanier = document.querySelector("#addToCart");
+// //actions de clic sur boutonPanier
+// boutonPanier.addEventListener("click", function (){
+// })
 
-//export des données pour le panier
-//Bouton Panier
-const boutonPanier = document.querySelector("#addToCart");
-//actions de clic sur boutonPanier
-boutonPanier.addEventListener("click", function (){
     // récupérer la valeur de la couleur choisi
     // récupéler la valeur de la quantité sélectionné
     // SI ils sont vides on affiche un message d'alerte
@@ -68,7 +71,6 @@ boutonPanier.addEventListener("click", function (){
     // on incrémente simplement la quantité du produit dans le tableau
     // on enregistre la variable tableau dans le localstorage
     // (on redirige ou non vers la page caddie)
-})
 
 
 async function main(){
