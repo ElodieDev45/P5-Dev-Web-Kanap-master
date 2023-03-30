@@ -47,33 +47,56 @@ fetch(apiProduct)
 const boutonPanier = document.querySelector("#addToCart");
 //actions de clic sur boutonPanier
 boutonPanier.addEventListener("click", function (){
-    let isError = false;
     const selectedColor = document.querySelector("#colors").value;
     const selectedQuantity = document.querySelector(`#quantity`).value;
+    //creation constante erreur
+    let isError = false;
+
+    // SI couleur est vide on affiche un message d'alerte
     if (selectedColor === '') {
         isError = true;
-        // SI ils sont vides on affiche un message d'alerte
-        console.log('error color')
+        return alert('Merci de sélectionner votre couleur');
+        // console.log('error color');
     }
+    // SI quantité est a 0 on affiche un message d'alerte
     if (parseInt(selectedQuantity) ===  0) {
         isError = true;
-        console.log('error qte')
+        return alert('Veuillez sélectionner une quantité supérieure à 0');
+        // console.log('error qte');
     }
-
-    if (!isError){
+    if (!isError){ /*s'il n'y a pas d'erreur*/
         // je fais le reste du traitement
         console.log('reste du traitement')
-        // on vérifie l'existence d'un panier présent dans le localstorage
-        let cart = localStorage.getItem('cart') ? JSON.parse(localStorage.getItem('cart')) : []; // ternaire
+        // 1- on vérifie l'existence d'un tableau de données présent dans le localstorage ici appelé "cart"
+        let cart = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
+        // 2- creation de l'objet cartItem du tableau Cart d'après les données de la page à récupérer por le panier.
         const cartItem = {
             color: selectedColor,
             quantity: parseInt(selectedQuantity),
             id: paramsId
         }
         
+        let isInCart = false;
+       
+        cart.forEach((item,index) => {
+            if (item.id === paramsId && item.color === selectedColor) {
+                cart[index].quantity += parseInt(selectedQuantity);
+                isInCart = true
+            }
+        });
+    
         // rajout de la valeur dans le tableau
-        cart.push(cartItem) // OK mais sous CONDITIONS (si le canapé n'existe pas dans le localstorage)
+        if(!isInCart){
+            cart.push(cartItem);
+        }
+        
+       
 
+
+
+       
+        
+            
         // on parcours le tableau (ou on utilise la méthode .find) pour vérifier
         // si on trouve dans celui-ci un produit ayant la meme id et meme couleur que celui qu'on a sélectionné
         // SI IL N'EXISTE PAS
