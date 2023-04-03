@@ -6,7 +6,7 @@ async function fetchData(){
     .then(response=>response.json())
     .then(datas=> {  
         productsDataBase = datas;
-        console.log(productsDataBase);
+        console.table(productsDataBase);
         filterDatas(productsDataBase);
    })
 }
@@ -14,20 +14,49 @@ async function fetchData(){
 function filterDatas(dataFromApi){
     let filteredCart = [];
     let dataFromStorage = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
-    console.log(dataFromStorage);
     // boucler sur dataFromApi
-    // dans la boucle de dataFromApi
-        // boucler sur dataFromStorage
-        // si l'id de ma boucle sur itemsFromsStorage == l'id de ma boucle sur dataFromApi
-        // alors je créé un objet qui a pour propriétés :
-        // un clé item qui aura toutes les infos du produit (que tu auras dans la boucle de dataFromApi)
-        // une clé qui contiendra la quantité selectionné (que tu auras dans la boucle dataFromStorage)
-        // une clé qui contiendra la couleur selectionné (que tu auras dans la boucle dataFromStorage)
-        // une fois que l'objet est créé, le push dans filteredCart
-        // tu créé et appel une fonction displayData qui prend en parametre filteredCart
-        
-
+    for (const elementsApi of dataFromApi){
+        /*console.log(elementsApi._id);*/
+        // dans la boucle de dataFromApi, boucler sur dataFromStorage
+        for (const elementsStorage of dataFromStorage){
+            /*console.log(elementsStorage.id);*/
+            // si l'id de ma boucle sur itemsFromsStorage == l'id de ma boucle sur dataFromApi
+            if (elementsApi._id === elementsStorage.id) {
+                // alors je créé un objet qui a pour propriétés :
+                let objectCart = {
+                    // un clé item qui aura toutes les infos du produit (que tu auras dans la boucle de dataFromApi)
+                    datasCart: elementsApi,
+                    // une clé qui contiendra la couleur selectionné (que tu auras dans la boucle dataFromStorage)
+                    colorCart: elementsStorage.color,
+                    // une clé qui contiendra la quantité selectionné (que tu auras dans la boucle dataFromStorage)
+                    qtyCart: elementsStorage.quantity
+                }
+                /* console.log(objectCart)*/;
+                // une fois que l'objet est créé, le push dans filteredCart
+                filteredCart.push(objectCart);
+            }
+            // tu créé et appel une fonction displayData qui prend en parametre filteredCart
+        }
+    }
+    /*console.log(filteredCart)*/;
+    displayData(filteredCart);
 }
+function displayData(datasCart){
+    for (const elementsCart of datasCart){
+
+        console.log(elementsCart);
+
+        /*chemins données nécessaires :
+        image src : elementsCart.datasCart.imageUrl;
+        image alt : elementsCart.datasCart.alt.txt;
+        nom produit : elementsCart.datasCart.name;
+        couleur produit : elementsCart.colorCart;
+        prix produit unitaire : elementsCart.datasCart.price + " €";
+        qté produit : (inputQuantity.value) elementsCart.qtyCart;
+        */
+       
+    };
+};
 
 fetchData();
 
@@ -47,8 +76,8 @@ fetchData();
 // imageItem.setAttribute("class","cart__item__img");
 //             // création Elements groupe "img""
 //             const imageProduct = document.createElement("img");
-//             imageProduct.src = "/back/images/kanap01.jpeg";
-//             imageProduct.alt = "";
+//             imageProduct.src = elementsCart.datasCart.imageUrl;
+//             imageProduct.alt = elementsCart.datasCart.altTxt;
 
 
 // //création balise Parent groupe "content"
@@ -60,11 +89,11 @@ fetchData();
 //     descriptionContent.setAttribute("class","cart__item__content__description");
 //     // création Elements "tittlePrice"
 //     const nameProduct = document.createElement("h2");
-//     nameProduct.innerText = "test";
+//     nameProduct.innerText = elementsCart.datasCart.name;
 //     const colorOption = document.createElement("p");
-//     colorOption.innerText = "test";
+//     colorOption.innerText = elementsCart.colorCart;
 //     const priceProduct = document.createElement("p");
-//     priceProduct.innerText = "test";
+//     priceProduct.innerText = elementsCart.datasCart.price + " €";
 
 //     //imbrication sous-groupe "tittlePrice"
 //     descriptionContent.appendChild(nameProduct);
@@ -88,7 +117,7 @@ fetchData();
 //             inputQuantity.setAttribute("name","itemQuantity");
 //             inputQuantity.setAttribute("min","1");
 //             inputQuantity.setAttribute("max","100");
-//             inputQuantity.value = "";
+//             inputQuantity.value = elementsCart.qtyCart;
 //         //imbrication sous-ensemble "Quantity"
 //         quantitySettings.appendChild(textQuantity);
 //         quantitySettings.appendChild(inputQuantity);
