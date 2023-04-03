@@ -77,32 +77,22 @@ boutonPanier.addEventListener("click", function (){
         }
         
         let isInCart = false;
-       
+        
+        // on parcours (buocle) le tableau (ou on utilise la méthode .find) pour vérifier
         cart.forEach((item,index) => {
+            // si le produit sélectionné EXISTE dans le tableau avec la meme id et meme couleur
             if (item.id === paramsId && item.color === selectedColor) {
+                // on incrémente (ajoute) simplement la quantité du produit dans le tableau
                 cart[index].quantity += parseInt(selectedQuantity);
                 isInCart = true
             }
         });
     
-        // rajout de la valeur dans le tableau
+        // SI IL N'EXISTE PAS dans le tableau
+        // on rajoute le produit complet dans le tableau
         if(!isInCart){
             cart.push(cartItem);
         }
-        
-       
-
-
-
-       
-        
-            
-        // on parcours le tableau (ou on utilise la méthode .find) pour vérifier
-        // si on trouve dans celui-ci un produit ayant la meme id et meme couleur que celui qu'on a sélectionné
-        // SI IL N'EXISTE PAS
-        // cart.push(cartItem)
-        // SI LE PRODUIT EXISTE (meme id et meme couleur)
-        // on incrémente simplement la quantité du produit dans le tableau
     
         localStorage.setItem('cart',JSON.stringify(cart))
         // (on redirige ou non vers la page caddie)

@@ -9,7 +9,7 @@ async function fetchData(){
 }
 
 function displayDatas(productsList){
-    console.log(productsList)
+    console.table(productsList);
     // définition de la section parent
     const sectionItems = document.querySelector("#items");
 

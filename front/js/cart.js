@@ -14,6 +14,7 @@ async function fetchData(){
 function filterDatas(dataFromApi){
     let filteredCart = [];
     let dataFromStorage = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
+    console.log(dataFromStorage);
     // boucler sur dataFromApi
     // dans la boucle de dataFromApi
         // boucler sur dataFromStorage
