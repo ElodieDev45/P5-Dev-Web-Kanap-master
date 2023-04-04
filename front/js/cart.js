@@ -35,115 +35,145 @@ function filterDatas(dataFromApi){
                 // une fois que l'objet est créé, le push dans filteredCart
                 filteredCart.push(objectCart);
             }
-            // tu créé et appel une fonction displayData qui prend en parametre filteredCart
         }
     }
+    // tu créé et appel une fonction displayData qui prend en parametre filteredCart
     /*console.log(filteredCart)*/;
     displayData(filteredCart);
 }
-function displayData(datasCart){
-    for (const elementsCart of datasCart){
+
+function displayData(cart){
+    // console.table(cart);
+
+    for (const elementsCart of cart){ /*ou */
+    // cart.forEach (elementsCart => {
 
         console.log(elementsCart);
 
+        document.querySelector("#cart__items").innerHTML = /*ou */
+        // const cartItems = document.querySelector("#cart__items");
+        // cartItems.innerHTML =
+            `<article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
+                <div class="cart__item__img">
+                  <img src="${elementsCart.datasCart.imageUrl}" alt="${elementsCart.datasCart.altTxt}">
+                </div>
+                <div class="cart__item__content">
+                    <div class="cart__item__content__description">
+                        <h2>${elementsCart.datasCart.name}</h2>
+                        <p>${elementsCart.colorCart}</p>
+                        <p>${elementsCart.datasCart.price} €</p>
+                    </div>
+                    <div class="cart__item__content__settings">
+                        <div class="cart__item__content__settings__quantity">
+                            <p>Qté : </p>
+                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${elementsCart.qtyCart}">
+                        </div>
+                        <div class="cart__item__content__settings__delete">
+                            <p class="deleteItem">Supprimer</p>
+                        </div>
+                    </div>
+                </div>
+            </article>`
+
+
         /*chemins données nécessaires :
         image src : elementsCart.datasCart.imageUrl;
-        image alt : elementsCart.datasCart.alt.txt;
+        image alt : elementsCart.datasCart.altTxt;
         nom produit : elementsCart.datasCart.name;
         couleur produit : elementsCart.colorCart;
-        prix produit unitaire : elementsCart.datasCart.price + " €";
+        prix produit unitaire : elementsCart.datasCart.price;
         qté produit : (inputQuantity.value) elementsCart.qtyCart;
         */
+
+
+       // // définition de la section parent "cart__items"
+       // const sectionCartItems = document.querySelector("#cart__items");
        
+       // //création article parent
+       // const articleCartItem = document.createElement("article");
+       // articleCartItem.setAttribute("class","cart__item");
+       // articleCartItem.setAttribute("data-id","{product-ID}");
+       // articleCartItem.setAttribute("data-color","{product-color}");
+       
+       // //création Parent groupe "img"
+       // const imageItem = document.createElement("div");
+       // imageItem.setAttribute("class","cart__item__img");
+       //             // création Elements groupe "img""
+       //             const imageProduct = document.createElement("img");
+       //             imageProduct.src = elementsCart.datasCart.imageUrl;
+       //             imageProduct.alt = elementsCart.datasCart.altTxt;
+       
+       
+       // //création balise Parent groupe "content"
+       // const contentItem = document.createElement("div");
+       // contentItem.setAttribute("class","cart__item__content");
+       
+       //     //création balise Parent sous-groupe "Description"
+       //     const descriptionContent = document.createElement("div");
+       //     descriptionContent.setAttribute("class","cart__item__content__description");
+       //     // création Elements "tittlePrice"
+       //     const nameProduct = document.createElement("h2");
+       //     nameProduct.innerText = elementsCart.datasCart.name;
+       //     const colorOption = document.createElement("p");
+       //     colorOption.innerText = elementsCart.colorCart;
+       //     const priceProduct = document.createElement("p");
+       //     priceProduct.innerText = elementsCart.datasCart.price + " €";
+       
+       //     //imbrication sous-groupe "tittlePrice"
+       //     descriptionContent.appendChild(nameProduct);
+       //     descriptionContent.appendChild(colorOption);
+       //     descriptionContent.appendChild(priceProduct);
+       
+       
+       //     //création balise Parent sous-groupe "settings"
+       //     const settingsContent = document.createElement("div");
+       //     settingsContent.setAttribute("class","cart__item__content__settings");
+       
+       //         //création balise sous-Ensemble "Quantity"
+       //         const quantitySettings = document.createElement("div");
+       //         quantitySettings.setAttribute("class","cart__item__content__settings__quantity");
+       //             // création Elements "Quantity"
+       //             const textQuantity = document.createElement("p");
+       //             textQuantity.innerText = "Qté :";
+       //             const inputQuantity = document.createElement("input");
+       //             inputQuantity.setAttribute("class","itemQuantity");
+       //             inputQuantity.setAttribute("type","number");
+       //             inputQuantity.setAttribute("name","itemQuantity");
+       //             inputQuantity.setAttribute("min","1");
+       //             inputQuantity.setAttribute("max","100");
+       //             inputQuantity.value = elementsCart.qtyCart;
+       //         //imbrication sous-ensemble "Quantity"
+       //         quantitySettings.appendChild(textQuantity);
+       //         quantitySettings.appendChild(inputQuantity);
+       
+       //         //création balise sous-Ensemble "Delete"
+       //         const deleteSettings = document.createElement("div");
+       //         deleteSettings.setAttribute("class","cart__item__content__settings__delete");
+       //             // création Elements "Quantity"
+       //             const deleteItem = document.createElement("p");
+       //             deleteItem.setAttribute("class","deleteItem");
+       //             deleteItem.innerText = "Supprimer";
+       //         //imbrication sous-ensemble "Delete"
+       //         deleteSettings.appendChild(deleteItem);
+       
+       //     //enfants sous-groupe "settings"
+       //     settingsContent.appendChild(quantitySettings);
+       //     settingsContent.appendChild(deleteSettings);
+       
+       // //enfants groupes "img" et "content"
+       // imageItem.appendChild(imageProduct);
+       // contentItem.appendChild(descriptionContent);
+       // contentItem.appendChild(settingsContent);
+       
+       // //enfants article
+       // articleCartItem.appendChild(imageItem);
+       // articleCartItem.appendChild(contentItem);
+       
+       // //Enfants du Parent principal SECTION
+       // sectionCartItems.appendChild(articleCartItem);
+
+    // });
     };
 };
 
 fetchData();
-
-
-
-// // définition de la section parent "cart__items"
-// const sectionCartItems = document.querySelector("#cart__items");
-
-// //création article parent
-// const articleCartItem = document.createElement("article");
-// articleCartItem.setAttribute("class","cart__item");
-// articleCartItem.setAttribute("data-id","{product-ID}");
-// articleCartItem.setAttribute("data-color","{product-color}");
-
-// //création Parent groupe "img"
-// const imageItem = document.createElement("div");
-// imageItem.setAttribute("class","cart__item__img");
-//             // création Elements groupe "img""
-//             const imageProduct = document.createElement("img");
-//             imageProduct.src = elementsCart.datasCart.imageUrl;
-//             imageProduct.alt = elementsCart.datasCart.altTxt;
-
-
-// //création balise Parent groupe "content"
-// const contentItem = document.createElement("div");
-// contentItem.setAttribute("class","cart__item__content");
-
-//     //création balise Parent sous-groupe "Description"
-//     const descriptionContent = document.createElement("div");
-//     descriptionContent.setAttribute("class","cart__item__content__description");
-//     // création Elements "tittlePrice"
-//     const nameProduct = document.createElement("h2");
-//     nameProduct.innerText = elementsCart.datasCart.name;
-//     const colorOption = document.createElement("p");
-//     colorOption.innerText = elementsCart.colorCart;
-//     const priceProduct = document.createElement("p");
-//     priceProduct.innerText = elementsCart.datasCart.price + " €";
-
-//     //imbrication sous-groupe "tittlePrice"
-//     descriptionContent.appendChild(nameProduct);
-//     descriptionContent.appendChild(colorOption);
-//     descriptionContent.appendChild(priceProduct);
-
-
-//     //création balise Parent sous-groupe "settings"
-//     const settingsContent = document.createElement("div");
-//     settingsContent.setAttribute("class","cart__item__content__settings");
-
-//         //création balise sous-Ensemble "Quantity"
-//         const quantitySettings = document.createElement("div");
-//         quantitySettings.setAttribute("class","cart__item__content__settings__quantity");
-//             // création Elements "Quantity"
-//             const textQuantity = document.createElement("p");
-//             textQuantity.innerText = "Qté :";
-//             const inputQuantity = document.createElement("input");
-//             inputQuantity.setAttribute("class","itemQuantity");
-//             inputQuantity.setAttribute("type","number");
-//             inputQuantity.setAttribute("name","itemQuantity");
-//             inputQuantity.setAttribute("min","1");
-//             inputQuantity.setAttribute("max","100");
-//             inputQuantity.value = elementsCart.qtyCart;
-//         //imbrication sous-ensemble "Quantity"
-//         quantitySettings.appendChild(textQuantity);
-//         quantitySettings.appendChild(inputQuantity);
-
-//         //création balise sous-Ensemble "Delete"
-//         const deleteSettings = document.createElement("div");
-//         deleteSettings.setAttribute("class","cart__item__content__settings__delete");
-//             // création Elements "Quantity"
-//             const deleteItem = document.createElement("p");
-//             deleteItem.setAttribute("class","deleteItem");
-//             deleteItem.innerText = "Supprimer";
-//         //imbrication sous-ensemble "Delete"
-//         deleteSettings.appendChild(deleteItem);
-
-//     //enfants sous-groupe "settings"
-//     settingsContent.appendChild(quantitySettings);
-//     settingsContent.appendChild(deleteSettings);
-
-// //enfants groupes "img" et "content"
-// imageItem.appendChild(imageProduct);
-// contentItem.appendChild(descriptionContent);
-// contentItem.appendChild(settingsContent);
-
-// //enfants article
-// articleCartItem.appendChild(imageItem);
-// articleCartItem.appendChild(contentItem);
-
-// //Enfants du Parent principal SECTION
-// sectionCartItems.appendChild(articleCartItem);
