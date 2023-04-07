@@ -61,7 +61,7 @@ function displayData(cart){
                 <div class="cart__item__content__description">
                     <h2>${elementsCart.datasCart.name}</h2>
                     <p>${elementsCart.colorCart}</p>
-                    <p>${elementsCart.datasCart.price * elementsCart.qtyCart} € (prix unitaire ${elementsCart.datasCart.price}€)</p>
+                    <p>${elementsCart.datasCart.price} €</p>
                 </div>
                 <div class="cart__item__content__settings">
                     <div class="cart__item__content__settings__quantity">
@@ -89,7 +89,44 @@ function displayData(cart){
         */
     };
     console.log(sectionCartItems);
+    displayTotals(cart);
+
+    //déclaration de la function pour les évènements de modification du panier
+    addEventsHandler(cart);
 
 };
+
+//function de calcul du total (prix et quantité)
+function displayTotals(filteredCart){
+    let totalPrice = 0;
+    let totalQuantity = 0;
+
+    //bouble sur le panier filtré pour calculer le prix total et la quantité par article
+    filteredCart.forEach(itemCart => {
+        totalQuantity += parseInt(itemCart.qtyCart);
+        totalPrice += parseInt(itemCart.datasCart.price * itemCart.qtyCart);
+    })
+    //pousse la valeur de quantité dans l'élément html
+    const containerQuantity = document.getElementById("totalQuantity");
+    containerQuantity.innerHTML = totalQuantity;
+    //pousse la valeur de Prix dans l'élément html
+    const containerPrice = document.getElementById("totalPrice");
+    containerPrice.innerHTML = totalPrice;
+
+}
+//function de modifications du panier
+function addEventsHandler(filteredCart){
+    //événement de "supprimer"
+    //variable assigner l'élément html <p> à chaque article du panier 
+    let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];
+    console.log('deleteItemContainer', deleteItemContainer);
+    //boucle sur chaque élément suivant l'index
+    deleteItemContainer.forEach((item, index) => {
+        item.addEventListener("click", function (){
+            console.log('index', index)
+
+        })
+    })
+}
 
 fetchData();
