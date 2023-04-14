@@ -114,9 +114,8 @@ function displayTotals(filteredCart){
 
 }
 
-//function de modifications du panier
-function addEventsHandler(filteredCart){
-    //création d'un nouvel objet lightCart contenant uniquement les 3 propriétés de base du Cart dans le localStorage
+function updateLocalStorage(filteredCart){
+    // création d'un nouvel objet lightCart contenant uniquement les 3 propriétés de base du Cart dans le localStorage
     let lightCart = filteredCart.map((element) =>{
         let lightElement = {
             color: element.colorCart,
@@ -125,21 +124,36 @@ function addEventsHandler(filteredCart){
         }
         return lightElement;
     })
+    
     console.log('lightCart', lightCart);
-    
+    localStorage.setItem('cart',JSON.stringify(lightCart));
+}
+
+//function de modifications du panier
+function addEventsHandler(filteredCart){
+  
     //Bouton SUPPRIMER
-    
+
     //création un tableau contenant tous les éléments de class 'deleteItem' 
     let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];/*([...] = syntaxe de propagation 'spread operation')*/
     // console.log('deleteItemContainer', deleteItemContainer);
-    
+    let modifyItemContainer = [...document.getElementsByClassName('itemQuantity')];/*([...] = syntaxe de propagation 'spread operation')*/
+
+    modifyItemContainer.forEach((item, index) => {
+        item.addEventListener("change", function (event){
+            const newQty = event.target.value
+            filteredCart[index].qtyCart = newQty
+            updateLocalStorage(filteredCart)
+            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
+            displayTotals(filteredCart);
+        })
+
+    })
+
+
     //boucle sur chaque élément suivant l'index
     deleteItemContainer.forEach((item, index) => {
         item.addEventListener("click", function (){
-            // console.log('index', index);
-            //stockage de l'élément sélectionné dans filteredItem
-            let filteredItem = lightCart[index];
-            console.log('filteredItem', filteredItem);
             
             //suppression de l'élément cliqué dans le tableau deleteItemContainer
             deleteItemContainer.splice(index, 1);
@@ -150,23 +164,32 @@ function addEventsHandler(filteredCart){
             
             // suppression l'élément dans le tableau 'filteredCart' et 'lightCart'
             filteredCart.splice(index, 1);
-            lightCart.splice(index, 1);
-            //mise à jour du local Storage avec le lightCart (sous le nom 'cart') en format JSON
-            localStorage.setItem('cart', JSON.stringify(lightCart));
             
-            // sauvegarde du produit supprimé dans le local storage (en cas de besoin ultérieur)
-            let deletedCart = /*If*/ localStorage.getItem('deletedCart') /*alors*/ ? JSON.parse(localStorage.getItem('deletedCart')) /*sinon*/: []; // ternaire
-            deletedCart.push(filteredItem);//ajout du produit au tableau
-            localStorage.setItem('deletedCart',JSON.stringify(deletedCart));//enregistre le panier supprimé
-            
+            updateLocalStorage(filteredCart)
             //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
             displayTotals(filteredCart);
-
-            console.log('new cart', lightCart);
         })
 
     })
+
 }
 
+// utiliser un gestionnaire d'evennnement pour le bouton valider
+// neutraliser le comportement par défaut du formulaire
+// initialiser une variable isError a false
+// récupérer la valeur des champs
+// utiliser des regex appropriés pour controller les format des champs
+// => format email (pour le champ email)
+// => vérifier que le champ n'est pas vide
+// => vérifier que le champ name ne soit pas un nombre
+// si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
+// si il y a une erreur on met la varibale isError a true
+// Ensuite on créé une conditionnelle : si isError === false alors on fait le reste du traitement
+// Créer un objet JSON (voir format donné dans les spec techniques)
+// Envoyer ce JSON a l'API avec le fetch MAIS en protocol POST
+// dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
+// un vide le localstorage
+// on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré
+// on récupère cet id et on le fait affiché sur la page confirmation
 
 fetchData();
