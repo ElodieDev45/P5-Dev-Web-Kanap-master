@@ -6,11 +6,11 @@ async function fetchData(){
     .then(response=>response.json())
     .then(datas=> {  
         productsDataBase = datas;
-        console.table(productsDataBase);
+        console.log('productDataBase', productsDataBase);
         filterDatas(productsDataBase);
    })
 }
-
+//compilation des données du local Storage
 function filterDatas(dataFromApi){
     let filteredCart = [];
     let dataFromStorage = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
@@ -38,16 +38,15 @@ function filterDatas(dataFromApi){
         }
     }
     // tu créé et appel une fonction displayData qui prend en parametre filteredCart
-    /*console.log(filteredCart)*/;
+    console.log('filteredCart', filteredCart);
     displayData(filteredCart);
 }
-
+//fonction de création du DOM Panier
 function displayData(cart){
     //Je récupère l'élèment parent de mon panier, ici la section #cart__items
     const sectionCartItems = document.querySelector("#cart__items");
     //je boucle sur les éléments contenus dans mon panier 
     for (const elementsCart of cart){
-
         // création du nouveau DOM pour le contenu du panier             
         const parser = new DOMParser(); /*https://developer.mozilla.org/fr/docs/Web/API/DOMParser*/
         
@@ -88,7 +87,7 @@ function displayData(cart){
         qté produit : (inputQuantity.value) elementsCart.qtyCart;
         */
     };
-    console.log(sectionCartItems);
+    /*console.log(sectionCartItems)*/;
     displayTotals(cart);
 
     //déclaration de la function pour les évènements de modification du panier
@@ -101,7 +100,7 @@ function displayTotals(filteredCart){
     let totalPrice = 0;
     let totalQuantity = 0;
 
-    //bouble sur le panier filtré pour calculer le prix total et la quantité par article
+    //boucle sur le panier filtré pour calculer le prix total et la quantité par article
     filteredCart.forEach(itemCart => {
         totalQuantity += parseInt(itemCart.qtyCart);
         totalPrice += parseInt(itemCart.datasCart.price * itemCart.qtyCart);
@@ -114,19 +113,60 @@ function displayTotals(filteredCart){
     containerPrice.innerHTML = totalPrice;
 
 }
+
 //function de modifications du panier
 function addEventsHandler(filteredCart){
-    //événement de "supprimer"
-    //variable assigner l'élément html <p> à chaque article du panier 
-    let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];
-    console.log('deleteItemContainer', deleteItemContainer);
+    //création d'un nouvel objet lightCart contenant uniquement les 3 propriétés de base du Cart dans le localStorage
+    let lightCart = filteredCart.map((element) =>{
+        let lightElement = {
+            color: element.colorCart,
+            quantity: parseInt(element.qtyCart),
+            id: element.datasCart._id 
+        }
+        return lightElement;
+    })
+    console.log('lightCart', lightCart);
+    
+    //Bouton SUPPRIMER
+    
+    //création un tableau contenant tous les éléments de class 'deleteItem' 
+    let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];/*([...] = syntaxe de propagation 'spread operation')*/
+    // console.log('deleteItemContainer', deleteItemContainer);
+    
     //boucle sur chaque élément suivant l'index
     deleteItemContainer.forEach((item, index) => {
         item.addEventListener("click", function (){
-            console.log('index', index)
+            // console.log('index', index);
+            //stockage de l'élément sélectionné dans filteredItem
+            let filteredItem = lightCart[index];
+            console.log('filteredItem', filteredItem);
+            
+            //suppression de l'élément cliqué dans le tableau deleteItemContainer
+            deleteItemContainer.splice(index, 1);
+            
+            //Sélection et suppression de l'élément html (DOM) parent entier (article complet)
+            let parentItem = item.closest('.cart__item');
+            parentItem.remove();
+            
+            // suppression l'élément dans le tableau 'filteredCart' et 'lightCart'
+            filteredCart.splice(index, 1);
+            lightCart.splice(index, 1);
+            //mise à jour du local Storage avec le lightCart (sous le nom 'cart') en format JSON
+            localStorage.setItem('cart', JSON.stringify(lightCart));
+            
+            // sauvegarde du produit supprimé dans le local storage (en cas de besoin ultérieur)
+            let deletedCart = /*If*/ localStorage.getItem('deletedCart') /*alors*/ ? JSON.parse(localStorage.getItem('deletedCart')) /*sinon*/: []; // ternaire
+            deletedCart.push(filteredItem);//ajout du produit au tableau
+            localStorage.setItem('deletedCart',JSON.stringify(deletedCart));//enregistre le panier supprimé
+            
+            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
+            displayTotals(filteredCart);
 
+            console.log('new cart', lightCart);
         })
+
     })
 }
+
 
 fetchData();

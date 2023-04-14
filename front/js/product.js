@@ -67,9 +67,9 @@ boutonPanier.addEventListener("click", function (){
     if (!isError){ /*s'il n'y a pas d'erreur*/
         // je fais le reste du traitement
         console.log('reste du traitement')
-        // 1- on vérifie l'existence d'un tableau de données présent dans le localstorage ici appelé "cart"
+        // 1- on vérifie l'existence d'un tableau de données présent dans le localstorage ici appelé "cart" sinon on crée un tableau 'cart' vide
         let cart = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
-        // 2- creation de l'objet cartItem du tableau Cart d'après les données de la page à récupérer por le panier.
+        // 2- creation de l'objet cartItem du tableau Cart d'après les données de la page à récupérer pour le panier.
         const cartItem = {
             color: selectedColor,
             quantity: parseInt(selectedQuantity),
@@ -78,7 +78,7 @@ boutonPanier.addEventListener("click", function (){
         
         let isInCart = false;
         
-        // on parcours (buocle) le tableau (ou on utilise la méthode .find) pour vérifier
+        // on parcours (boucle) le tableau (ou on utilise la méthode .find) pour vérifier
         cart.forEach((item,index) => {
             // si le produit sélectionné EXISTE dans le tableau avec la meme id et meme couleur
             if (item.id === paramsId && item.color === selectedColor) {
@@ -99,21 +99,3 @@ boutonPanier.addEventListener("click", function (){
     }
     
 })
-    
-
-
-// plus rien ne se passe apres
-
-
-
-
-
-    
-    
-
-    
-    // async function main(){
-        //    await fetchData()
-        // }
-        
-// main()
