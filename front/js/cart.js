@@ -41,6 +41,7 @@ function filterDatas(dataFromApi){
     console.log('filteredCart', filteredCart);
     displayData(filteredCart);
 }
+
 //fonction de création du DOM Panier
 function displayData(cart){
     //Je récupère l'élèment parent de mon panier, ici la section #cart__items
@@ -174,22 +175,97 @@ function addEventsHandler(filteredCart){
 
 }
 
-// utiliser un gestionnaire d'evennnement pour le bouton valider
-// neutraliser le comportement par défaut du formulaire
-// initialiser une variable isError a false
+
+
 // récupérer la valeur des champs
-// utiliser des regex appropriés pour controller les format des champs
-// => format email (pour le champ email)
-// => vérifier que le champ n'est pas vide
-// => vérifier que le champ name ne soit pas un nombre
-// si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
-// si il y a une erreur on met la varibale isError a true
-// Ensuite on créé une conditionnelle : si isError === false alors on fait le reste du traitement
-// Créer un objet JSON (voir format donné dans les spec techniques)
-// Envoyer ce JSON a l'API avec le fetch MAIS en protocol POST
-// dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
-// un vide le localstorage
-// on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré
-// on récupère cet id et on le fait affiché sur la page confirmation
+const firstName = document.getElementById("firstName");
+const firstNameError = document.getElementById("firstNameErrorMsg");
+const lastName = document.getElementById("lastName");
+const lastNameError = document.getElementById("lastNameErrorMsg");
+const address = document.getElementById("address");
+const addressError = document.getElementById("addressErrorMsg");
+const city = document.getElementById("city");
+const cityError = document.getElementById("cityErrorMsg");
+const email = document.getElementById("email");
+const emailError = document.getElementById("emailErrorMsg");
+
+// utiliser un gestionnaire d'evennnement pour le bouton valider
+const boutonCommande = document.querySelector("#order");
+// utiliser un gestionnaire d'evennnement pour le bouton valider
+boutonCommande.addEventListener("click", function (event){
+    // neutraliser le comportement par défaut du formulaire
+    event.preventDefault();
+
+    // initialiser une variable isError a false
+    let isError = false;
+
+    // récupérer la valeur des champs
+    const contactObject = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value
+    }
+    console.log('contact Object', contactObject);
+
+    // utiliser des regex appropriés pour controller les format des champs
+    // => format email (pour le champ email)
+    let regexEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; //1er groupe ne contient pas @ ni d'espace puis arobase et second groupe avant le point ne contient pas @ ni d'espace puis point et dernier groupe ne contient pas @ ni d'espace
+    // => vérifier que le champ n'est pas vide
+    let regexNotEmpty = /^.+$/;
+    // => vérifier que le champ name ne soit pas un nombre
+    let regexNotNumber = /^\D*$/;
+
+    // si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
+    if(!regexNotEmpty.test(contactObject.firstName)){
+        firstNameError.innerText = "* Merci de renseigner ce champ";
+        isError = true;
+    }else{//pour vider le champ erreur en cas de resaisie correcte
+        firstNameError.innerText = "";
+    }
+
+    if(!regexNotEmpty.test(contactObject.address)){
+        addressError.innerText = "* Merci de renseigner ce champ";
+        isError = true;
+    }else{
+        addressError.innerText = "";
+    }
+
+    if(!regexNotEmpty.test(contactObject.city)){
+        cityError.innerText = "* Merci de renseigner ce champ";
+        isError = true;
+    }else{
+        cityError.innerText = "";
+    }
+
+    if(!regexNotNumber.test(contactObject.lastName) || !regexNotEmpty.test(contactObject.lastName)){
+        lastNameError.innerText = "Champ vide ou invalide, merci de vérifier votre saisie";
+        isError = true;
+    }else{
+        lastNameError.innerText = "";
+    }
+    
+    if(!regexEmail.test(contactObject.email)){
+        emailError.innerText = "adresse email invalide, merci de vérifier votre saisie";
+        isError = true;
+    }else{
+        emailError.innerText = "";
+    }
+    // Ensuite on créé une conditionnelle : si isError === false alors on fait le reste du traitement
+    if (!isError){ /*s'il n'y a pas d'erreur*/
+    // Créer un objet JSON (voir format donné dans les spec techniques)
+    const contact = JSON.stringify(contactObject);  //ajouter le local storage
+
+    // Envoyer ce JSON a l'API avec le fetch MAIS en protocol POST
+    // dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
+    // un vide le localstorage
+    // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré
+    // on récupère cet id et on le fait affiché sur la page confirmation
+    console.log('contact', contact);
+    }
+})
+
+
 
 fetchData();
