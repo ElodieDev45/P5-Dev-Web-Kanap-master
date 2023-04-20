@@ -176,7 +176,6 @@ function addEventsHandler(filteredCart){
 }
 
 
-
 // récupérer la valeur des champs
 const firstName = document.getElementById("firstName");
 const firstNameError = document.getElementById("firstNameErrorMsg");
@@ -207,39 +206,43 @@ boutonCommande.addEventListener("click", function (event){
         city: city.value,
         email: email.value
     }
-    console.log('contact Object', contactObject);
+    // console.log('contact Object', contactObject);
 
     // utiliser des regex appropriés pour controller les format des champs
     // => format email (pour le champ email)
     let regexEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; //1er groupe ne contient pas @ ni d'espace puis arobase et second groupe avant le point ne contient pas @ ni d'espace puis point et dernier groupe ne contient pas @ ni d'espace
-    // => vérifier que le champ n'est pas vide
-    let regexNotEmpty = /^.+$/;
+    // // => vérifier que le champ n'est pas vide (1 caractère ou +)
+    // let regexNotEmpty = /^.+$/;
+    // => vérifier que le champ contient au moins 2 caractères
+    let regexTwoCaract = /^.{2,}$/;
+    // => vérifier que le champ contient au moins 3 caractères
+    let regexThreeCaract = /^.{3,}$/;    
     // => vérifier que le champ name ne soit pas un nombre
     let regexNotNumber = /^\D*$/;
 
     // si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
-    if(!regexNotEmpty.test(contactObject.firstName)){
+    if(!regexTwoCaract.test(contactObject.firstName)){
         firstNameError.innerText = "* Merci de renseigner ce champ";
         isError = true;
     }else{//pour vider le champ erreur en cas de resaisie correcte
         firstNameError.innerText = "";
     }
 
-    if(!regexNotEmpty.test(contactObject.address)){
+    if(!regexThreeCaract.test(contactObject.address)){
         addressError.innerText = "* Merci de renseigner ce champ";
         isError = true;
     }else{
         addressError.innerText = "";
     }
 
-    if(!regexNotEmpty.test(contactObject.city)){
+    if(!regexThreeCaract.test(contactObject.city)){
         cityError.innerText = "* Merci de renseigner ce champ";
         isError = true;
     }else{
         cityError.innerText = "";
     }
 
-    if(!regexNotNumber.test(contactObject.lastName) || !regexNotEmpty.test(contactObject.lastName)){
+    if(!regexNotNumber.test(contactObject.lastName) || !regexTwoCaract.test(contactObject.lastName)){
         lastNameError.innerText = "Champ vide ou invalide, merci de vérifier votre saisie";
         isError = true;
     }else{
@@ -252,17 +255,43 @@ boutonCommande.addEventListener("click", function (event){
     }else{
         emailError.innerText = "";
     }
+    console.log("test",isError);
     // Ensuite on créé une conditionnelle : si isError === false alors on fait le reste du traitement
     if (!isError){ /*s'il n'y a pas d'erreur*/
-    // Créer un objet JSON (voir format donné dans les spec techniques)
-    const contact = JSON.stringify(contactObject);  //ajouter le local storage
+        // Créer un objet JSON (voir format donné dans les spec techniques)
+        // console.log('contact', contactObject);
 
-    // Envoyer ce JSON a l'API avec le fetch MAIS en protocol POST
-    // dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
-    // un vide le localstorage
-    // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré
-    // on récupère cet id et on le fait affiché sur la page confirmation
-    console.log('contact', contact);
+        
+        // récupérer le localstorage 
+        const cart = JSON.parse(localStorage.getItem('cart'));
+        
+        const contact = {
+            contact: contactObject,
+            products: [...cart.map(product => product.id)]
+        };
+        console.log( typeof cart)
+        console.log('contact',contact)
+        fetch("http://localhost:3000/api/products/order", {
+            headers:{
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            method: "POST", 
+            body: JSON.stringify(contact)
+        })
+        .then (response => response.json())
+        .then (order => {
+            console.log(order);
+
+            // dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
+            
+            // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré (comme page product)
+            
+            // un vide le localstorage
+
+            // on récupère cet id et on le fait affiché sur la page confirmation
+        })
+        .catch (error=>console.log(error));
     }
 })
 
