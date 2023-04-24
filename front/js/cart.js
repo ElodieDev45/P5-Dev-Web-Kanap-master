@@ -87,6 +87,7 @@ function addEventsHandler(filteredCart){
     let modifyItemContainer = [...document.getElementsByClassName('itemQuantity')];/*([...] = syntaxe de propagation 'spread operation')*/
     //création tableau de tous les éléments de class 'deleteItem' 
     let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];/*([...] = syntaxe de propagation 'spread operation')*/
+    
     //-------- modification quantité --------
     modifyItemContainer.forEach((item, index) => {
         item.addEventListener("change", function (event){
@@ -97,6 +98,7 @@ function addEventsHandler(filteredCart){
             displayTotals(filteredCart);
         })
     })
+    
     //-------- Bouton SUPPRIMER --------
     //boucle sur chaque élément suivant l'index
     deleteItemContainer.forEach((item, index) => {
@@ -148,29 +150,15 @@ function updateLocalStorage(filteredCart){
     localStorage.setItem('cart',JSON.stringify(lightCart));
 }
 
-//_________ champ formulaire _________
-// récupérer la valeur des champs
-const firstName = document.getElementById("firstName");
-const firstNameError = document.getElementById("firstNameErrorMsg");
-const lastName = document.getElementById("lastName");
-const lastNameError = document.getElementById("lastNameErrorMsg");
-const address = document.getElementById("address");
-const addressError = document.getElementById("addressErrorMsg");
-const city = document.getElementById("city");
-const cityError = document.getElementById("cityErrorMsg");
-const email = document.getElementById("email");
-const emailError = document.getElementById("emailErrorMsg");
-
-// utiliser un gestionnaire d'evennnement pour le bouton valider
-const boutonCommande = document.querySelector("#order");
-// utiliser un gestionnaire d'evennnement pour le bouton valider
-boutonCommande.addEventListener("click", function (event){
-    // neutraliser le comportement par défaut du formulaire
-    event.preventDefault();
-
-    // initialiser une variable isError a false
-    let isError = false;
-
+//_________ traitement du formulaire _________
+//----- récupération de la valeur des champs -----
+function contactValues(){
+    //éléments html
+    const firstName = document.getElementById("firstName");
+    const lastName = document.getElementById("lastName");
+    const address = document.getElementById("address");
+    const city = document.getElementById("city");
+    const email = document.getElementById("email");
     // récupérer la valeur des champs
     const contactObject = {
         firstName: firstName.value,
@@ -179,20 +167,28 @@ boutonCommande.addEventListener("click", function (event){
         city: city.value,
         email: email.value
     }
-    // console.log('contact Object', contactObject);
-
-    // utiliser des regex appropriés pour controller les format des champs
-    // => format email (pour le champ email)
+    return contactObject;
+}
+//----- vérification de saisie -----
+function checkFormulaire(contactObject){
+    //éléments html de message d'erreur
+    const firstNameError = document.getElementById("firstNameErrorMsg");
+    const lastNameError = document.getElementById("lastNameErrorMsg");
+    const addressError = document.getElementById("addressErrorMsg");
+    const cityError = document.getElementById("cityErrorMsg");
+    const emailError = document.getElementById("emailErrorMsg");
+    // initialiser variable isError a false
+    let isError = false;
+    // ----- Regex -----
+    // format email (pour le champ email)
     let regexEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; //1er groupe ne contient pas @ ni d'espace puis arobase et second groupe avant le point ne contient pas @ ni d'espace puis point et dernier groupe ne contient pas @ ni d'espace
-    // // => vérifier que le champ n'est pas vide (1 caractère ou +)
-    // let regexNotEmpty = /^.+$/;
-    // => vérifier que le champ contient au moins 2 caractères
+    // le champ contient au moins 2 caractères (écriture pour "non vide" : /^.+$/)
     let regexTwoCaract = /^.{2,}$/;
-    // => vérifier que le champ contient au moins 3 caractères
+    // le champ contient au moins 3 caractères
     let regexThreeCaract = /^.{3,}$/;    
-    // => vérifier que le champ name ne soit pas un nombre
+    // le champ name n'est pas un nombre
     let regexNotNumber = /^\D*$/;
-
+    //----- conditions de vérification -----
     // si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
     if(!regexTwoCaract.test(contactObject.firstName)){
         firstNameError.innerText = "* Merci de renseigner ce champ";
@@ -228,47 +224,71 @@ boutonCommande.addEventListener("click", function (event){
     }else{
         emailError.innerText = "";
     }
-    console.log("test",isError);
-    // Ensuite on créé une conditionnelle : si isError === false alors on fait le reste du traitement
-    if (!isError){ /*s'il n'y a pas d'erreur*/
-        // Créer un objet JSON (voir format donné dans les spec techniques)
-        // console.log('contact', contactObject);
 
-        
+    return isError;
+}
+
+//_________ Bouton Commander _________
+// séléction du html du bouton
+const boutonCommande = document.querySelector("#order");
+// gestionnaire d'évennement sur le bouton commander
+boutonCommande.addEventListener("click", function (event){
+    //----- formulaire ------
+    // neutralisation du comportement par défaut
+    event.preventDefault();
+    //récupération données (cf function)
+    let contactObject = contactValues(); 
+    //vérification de la saisie (cf function)
+    let isError = checkFormulaire(contactObject);
+
+    console.log("test",isError);
+    // conditionnelle : si isError === false alors reste du traitement
+    if (!isError){ /*s'il n'y a pas d'erreur*/
         // récupérer le localstorage 
         const cart = JSON.parse(localStorage.getItem('cart'));
-        
+        // Création objet contact (incluant contactObject et ID des articles du panier "cart")
         const contact = {
             contact: contactObject,
             products: [...cart.map(product => product.id)]
         };
-        console.log( typeof cart)
+        
+        // console.log( typeof cart)
         console.log('contact',contact)
         
+        //envoi des informations de la commande à l'API pour retour du n° de commande
         fetch("http://localhost:3000/api/products/order", {
             headers:{
                 "Accept": "application/json",
                 "Content-Type": "application/json"
             },
             method: "POST", 
+            //transformation de contact en JSON
             body: JSON.stringify(contact)
         })
         .then (response => response.json())
         .then (order => {
-            console.log(order);
-
-            // dans le then de la réponse récupérer l'orderid de la commande renvoyé par le back
-            
+            console.log('order', order);
+            // récupération de l'orderid de la commande renvoyé par le back
+            let orderId = order.orderId;
+            console.log(orderId);
             // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré (comme page product)
-            
-            // un vide le localstorage
+            const cartUrl = window.location.href;
+            console.log(cartUrl);
+            const urlConfirmationOrder = cartUrl.replace(`cart.html`, `confirmation.html?order=${orderId}`);
+            console.log(urlConfirmationOrder);
 
-            // on récupère cet id et on le fait affiché sur la page confirmation
+            //redirection vers la page de confirmation de commande
+            window.location.href = urlConfirmationOrder;
+
+            // vide le localstorage
+            localStorage.clear();
+
+            // on récupère cet id et on le fait afficher sur la page confirmation
+            //voir page confirmation.js
         })
         .catch (error=>console.log(error));
     }
 })
-
 
 
 fetchData();

@@ -96,6 +96,6 @@ boutonPanier.addEventListener("click", function (){
         localStorage.setItem('cart',JSON.stringify(cart))
         // (on redirige ou non vers la page caddie)
 
-        return alert(`Votre choix à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
+        return alert(`Votre article à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
     }
 })
