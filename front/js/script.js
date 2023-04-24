@@ -1,3 +1,4 @@
+//________ récupération des données de l'API ________
 const urlApi = "http://localhost:3000/api/products";
 //récupération des données de l'API
 async function fetchData(){
@@ -8,6 +9,7 @@ async function fetchData(){
     })
 }
 
+//________ affichage des produits ________
 function displayDatas(productsList){
     console.table(productsList);
     // définition de la section parent
@@ -37,7 +39,6 @@ function displayDatas(productsList){
         elementA.appendChild(elementArticle);
         sectionItems.appendChild(elementA)
     });
-
 }
 
 async function main(){

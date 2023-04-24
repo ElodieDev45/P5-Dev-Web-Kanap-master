@@ -1,6 +1,7 @@
+//_________ récupération des données de l'API _________
 const urlApi = "http://localhost:3000/api/products";
 var productsDataBase;
-//récupération des données de l'API
+
 async function fetchData(){
     fetch(urlApi)
     .then(response=>response.json())
@@ -10,48 +11,43 @@ async function fetchData(){
         filterDatas(productsDataBase);
    })
 }
-//compilation des données du local Storage
+//_________ compilation des données du local Storage _________
 function filterDatas(dataFromApi){
     let filteredCart = [];
     let dataFromStorage = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
     // boucler sur dataFromApi
     for (const elementsApi of dataFromApi){
-        /*console.log(elementsApi._id);*/
         // dans la boucle de dataFromApi, boucler sur dataFromStorage
         for (const elementsStorage of dataFromStorage){
-            /*console.log(elementsStorage.id);*/
             // si l'id de ma boucle sur itemsFromsStorage == l'id de ma boucle sur dataFromApi
             if (elementsApi._id === elementsStorage.id) {
                 // alors je créé un objet qui a pour propriétés :
                 let objectCart = {
-                    // un clé item qui aura toutes les infos du produit (que tu auras dans la boucle de dataFromApi)
+                    // clé item de toutes les infos du produit (dans boucle dataFromApi)
                     datasCart: elementsApi,
-                    // une clé qui contiendra la couleur selectionné (que tu auras dans la boucle dataFromStorage)
+                    // clé de la couleur selectionnée (dans boucle dataFromStorage)
                     colorCart: elementsStorage.color,
-                    // une clé qui contiendra la quantité selectionné (que tu auras dans la boucle dataFromStorage)
+                    // clé de la quantité selectionnée (dans boucle dataFromStorage)
                     qtyCart: elementsStorage.quantity
                 }
-                /* console.log(objectCart)*/;
-                // une fois que l'objet est créé, le push dans filteredCart
+                // push de l'objet "objectCart" dans le tableau "filteredCart"
                 filteredCart.push(objectCart);
             }
         }
     }
-    // tu créé et appel une fonction displayData qui prend en parametre filteredCart
+    // déclaration/appel fonction displayData avec parametres filteredCart pour creation du DOM
     console.log('filteredCart', filteredCart);
     displayData(filteredCart);
 }
 
-//fonction de création du DOM Panier
+//_________ création du DOM Panier _________
 function displayData(cart){
-    //Je récupère l'élèment parent de mon panier, ici la section #cart__items
+    //récupération élèment parent du panier (ici la section #cart__items)
     const sectionCartItems = document.querySelector("#cart__items");
-    //je boucle sur les éléments contenus dans mon panier 
+    //boucle sur les éléments du panier "cart"
     for (const elementsCart of cart){
-        // création du nouveau DOM pour le contenu du panier             
         const parser = new DOMParser(); /*https://developer.mozilla.org/fr/docs/Web/API/DOMParser*/
-        
-        //structure en texte avec références aux valeurs des éléments du panier        
+        //création du nouveau DOM pour le contenu du panier (suivant le html)            
         const cartItemsText =
         `<article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
             <div class="cart__item__img">
@@ -74,34 +70,56 @@ function displayData(cart){
                 </div>
             </div>
         </article>`
-        //je transforme mon text en html
+        //parsing (analyse et transformation du text en html)
         const cartItemsHtml = parser.parseFromString(cartItemsText, "text/html");
-        //j'assigne l'enfant au parent
+        //assignement enfant au parent
         sectionCartItems.appendChild(cartItemsHtml.body.firstChild);
-
-        /*chemins datas nécessaires :
-        image src : elementsCart.datasCart.imageUrl;
-        image alt : elementsCart.datasCart.altTxt;
-        nom produit : elementsCart.datasCart.name;
-        couleur produit : elementsCart.colorCart;
-        prix produit unitaire : elementsCart.datasCart.price;
-        qté produit : (inputQuantity.value) elementsCart.qtyCart;
-        */
     };
-    /*console.log(sectionCartItems)*/;
+    //déclaration function calcul prix total panier
     displayTotals(cart);
-
-    //déclaration de la function pour les évènements de modification du panier
+    //déclaration function évènements modifications panier
     addEventsHandler(cart);
-
 };
 
-//function de calcul du total (prix et quantité)
+//_________ modifications du panier _________
+function addEventsHandler(filteredCart){
+    //création tableau de tous les éléments de class 'itemQuantity' 
+    let modifyItemContainer = [...document.getElementsByClassName('itemQuantity')];/*([...] = syntaxe de propagation 'spread operation')*/
+    //création tableau de tous les éléments de class 'deleteItem' 
+    let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];/*([...] = syntaxe de propagation 'spread operation')*/
+    //-------- modification quantité --------
+    modifyItemContainer.forEach((item, index) => {
+        item.addEventListener("change", function (event){
+            const newQty = event.target.value
+            filteredCart[index].qtyCart = newQty
+            updateLocalStorage(filteredCart)
+            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
+            displayTotals(filteredCart);
+        })
+    })
+    //-------- Bouton SUPPRIMER --------
+    //boucle sur chaque élément suivant l'index
+    deleteItemContainer.forEach((item, index) => {
+        item.addEventListener("click", function (){
+            //suppression de l'élément cliqué dans le tableau deleteItemContainer
+            deleteItemContainer.splice(index, 1);
+            //Sélection et suppression de l'élément html (DOM) parent entier (article complet)
+            let parentItem = item.closest('.cart__item');
+            parentItem.remove();
+            // suppression l'élément dans le tableau 'filteredCart' et 'lightCart'
+            filteredCart.splice(index, 1);
+            updateLocalStorage(filteredCart)
+            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
+            displayTotals(filteredCart);
+        })
+    })
+}
+
+//_________ calcul du total panier (prix et quantité) _________
 function displayTotals(filteredCart){
     let totalPrice = 0;
     let totalQuantity = 0;
-
-    //boucle sur le panier filtré pour calculer le prix total et la quantité par article
+    //boucle sur panier filtré calcule prix total et quantité par article
     filteredCart.forEach(itemCart => {
         totalQuantity += parseInt(itemCart.qtyCart);
         totalPrice += parseInt(itemCart.datasCart.price * itemCart.qtyCart);
@@ -112,11 +130,11 @@ function displayTotals(filteredCart){
     //pousse la valeur de Prix dans l'élément html
     const containerPrice = document.getElementById("totalPrice");
     containerPrice.innerHTML = totalPrice;
-
 }
 
+//_________ mise à jour du Local Storage _________
 function updateLocalStorage(filteredCart){
-    // création d'un nouvel objet lightCart contenant uniquement les 3 propriétés de base du Cart dans le localStorage
+    // création nouvel objet "lightCart" contenant uniquement les 3 propriétés de base du Cart dans le localStorage (id, couleur, qté)
     let lightCart = filteredCart.map((element) =>{
         let lightElement = {
             color: element.colorCart,
@@ -125,57 +143,12 @@ function updateLocalStorage(filteredCart){
         }
         return lightElement;
     })
-    
     console.log('lightCart', lightCart);
+    //enregistrement en JSON du nouveau fichier cart dans le local Storage
     localStorage.setItem('cart',JSON.stringify(lightCart));
 }
 
-//function de modifications du panier
-function addEventsHandler(filteredCart){
-  
-    //Bouton SUPPRIMER
-
-    //création un tableau contenant tous les éléments de class 'deleteItem' 
-    let deleteItemContainer = [...document.getElementsByClassName('deleteItem')];/*([...] = syntaxe de propagation 'spread operation')*/
-    // console.log('deleteItemContainer', deleteItemContainer);
-    let modifyItemContainer = [...document.getElementsByClassName('itemQuantity')];/*([...] = syntaxe de propagation 'spread operation')*/
-
-    modifyItemContainer.forEach((item, index) => {
-        item.addEventListener("change", function (event){
-            const newQty = event.target.value
-            filteredCart[index].qtyCart = newQty
-            updateLocalStorage(filteredCart)
-            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
-            displayTotals(filteredCart);
-        })
-
-    })
-
-
-    //boucle sur chaque élément suivant l'index
-    deleteItemContainer.forEach((item, index) => {
-        item.addEventListener("click", function (){
-            
-            //suppression de l'élément cliqué dans le tableau deleteItemContainer
-            deleteItemContainer.splice(index, 1);
-            
-            //Sélection et suppression de l'élément html (DOM) parent entier (article complet)
-            let parentItem = item.closest('.cart__item');
-            parentItem.remove();
-            
-            // suppression l'élément dans le tableau 'filteredCart' et 'lightCart'
-            filteredCart.splice(index, 1);
-            
-            updateLocalStorage(filteredCart)
-            //recalcul du total (sur filteredCart comme la fonction pour que le calcul soit immédiat au clic et non à l'actualisation de la page)
-            displayTotals(filteredCart);
-        })
-
-    })
-
-}
-
-
+//_________ champ formulaire _________
 // récupérer la valeur des champs
 const firstName = document.getElementById("firstName");
 const firstNameError = document.getElementById("firstNameErrorMsg");
@@ -271,6 +244,7 @@ boutonCommande.addEventListener("click", function (event){
         };
         console.log( typeof cart)
         console.log('contact',contact)
+        
         fetch("http://localhost:3000/api/products/order", {
             headers:{
                 "Accept": "application/json",

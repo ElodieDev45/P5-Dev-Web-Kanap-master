@@ -1,10 +1,10 @@
-//récupération de l'ID du produit de la page
+//________ récupération de l'ID du produit de la page ________
 const paramsId = new URLSearchParams(window.location.search).get('id');
 console.log(paramsId);
 const apiProduct = "http://localhost:3000/api/products/" + paramsId;
 console.log(apiProduct);
 
-//récupération données de l'API
+//________ récupération données de l'API ________
 // async function fetchData(){
 fetch(apiProduct)
 .then(response=>response.json())
@@ -42,8 +42,7 @@ fetch(apiProduct)
     }
 })
 
-// //export des données pour le panier
-//Bouton Panier
+//________ Bouton Panier (export des données)________
 const boutonPanier = document.querySelector("#addToCart");
 //actions de clic sur boutonPanier
 boutonPanier.addEventListener("click", function (){
@@ -55,13 +54,13 @@ boutonPanier.addEventListener("click", function (){
     // SI couleur est vide on affiche un message d'alerte
     if (selectedColor === '') {
         isError = true;
-        return alert('Merci de sélectionner votre couleur');
+        return alert(`Merci de sélectionner la couleur désirée`);
         // console.log('error color');
     }
     // SI quantité est a 0 on affiche un message d'alerte
     if (parseInt(selectedQuantity) ===  0) {
         isError = true;
-        return alert('Veuillez sélectionner une quantité supérieure à 0');
+        return alert(`Veuillez sélectionner votre quantité`);
         // console.log('error qte');
     }
     if (!isError){ /*s'il n'y a pas d'erreur*/
@@ -96,6 +95,7 @@ boutonPanier.addEventListener("click", function (){
     
         localStorage.setItem('cart',JSON.stringify(cart))
         // (on redirige ou non vers la page caddie)
+
+        return alert(`Votre choix à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
     }
-    
 })
