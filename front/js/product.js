@@ -1,8 +1,8 @@
 //________ récupération de l'ID du produit de la page ________
 const paramsId = new URLSearchParams(window.location.search).get('id');
-console.log(paramsId);
+console.log('id article :',paramsId);
 const apiProduct = "http://localhost:3000/api/products/" + paramsId;
-console.log(apiProduct);
+// console.log(apiProduct);
 
 //________ récupération données de l'API ________
 // async function fetchData(){
@@ -31,7 +31,7 @@ fetch(apiProduct)
     descriptionProduct.innerText = productDetails.description;
     // création et imbrication de plusieurs éléments option avec boucle
     let colorsList = productDetails.colors;
-    console.log(colorsList);
+    // console.log('colorsList', colorsList);
     for(let i in colorsList){
         let productColor = colorsList[i];
         let selectColor = document.querySelector("#colors");
@@ -65,7 +65,7 @@ boutonPanier.addEventListener("click", function (){
     }
     if (!isError){ /*s'il n'y a pas d'erreur*/
         // je fais le reste du traitement
-        console.log('reste du traitement')
+        // console.log('reste du traitement')
         // 1- on vérifie l'existence d'un tableau de données présent dans le localstorage ici appelé "cart" sinon on crée un tableau 'cart' vide
         let cart = /*If*/ localStorage.getItem('cart') /*alors*/ ? JSON.parse(localStorage.getItem('cart')) /*sinon*/: []; // ternaire
         // 2- creation de l'objet cartItem du tableau Cart d'après les données de la page à récupérer pour le panier.
@@ -96,6 +96,6 @@ boutonPanier.addEventListener("click", function (){
         localStorage.setItem('cart',JSON.stringify(cart))
         // (on redirige ou non vers la page caddie)
 
-        return alert(`Votre article à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
+        window.alert(`Votre article à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
     }
 })

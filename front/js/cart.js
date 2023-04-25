@@ -241,7 +241,7 @@ boutonCommande.addEventListener("click", function (event){
     //vérification de la saisie (cf function)
     let isError = checkFormulaire(contactObject);
 
-    console.log("test",isError);
+    //console.log("test",isError);
     // conditionnelle : si isError === false alors reste du traitement
     if (!isError){ /*s'il n'y a pas d'erreur*/
         // récupérer le localstorage 
@@ -251,9 +251,8 @@ boutonCommande.addEventListener("click", function (event){
             contact: contactObject,
             products: [...cart.map(product => product.id)]
         };
-        
         // console.log( typeof cart)
-        console.log('contact',contact)
+        // console.log('contact',contact)
         
         //envoi des informations de la commande à l'API pour retour du n° de commande
         fetch("http://localhost:3000/api/products/order", {
@@ -270,12 +269,12 @@ boutonCommande.addEventListener("click", function (event){
             console.log('order', order);
             // récupération de l'orderid de la commande renvoyé par le back
             let orderId = order.orderId;
-            console.log(orderId);
+            // console.log(orderId);
             // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré (comme page product)
             const cartUrl = window.location.href;
-            console.log(cartUrl);
             const urlConfirmationOrder = cartUrl.replace(`cart.html`, `confirmation.html?order=${orderId}`);
-            console.log(urlConfirmationOrder);
+            // console.log(cartUrl);
+            // console.log(urlConfirmationOrder);
 
             //redirection vers la page de confirmation de commande
             window.location.href = urlConfirmationOrder;
