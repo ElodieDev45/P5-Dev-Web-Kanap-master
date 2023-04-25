@@ -7,7 +7,7 @@ async function fetchData(){
     .then(response=>response.json())
     .then(datas=> {  
         productsDataBase = datas;
-        console.log('productDataBase', productsDataBase);
+        // console.log('productDataBase', productsDataBase);
         filterDatas(productsDataBase);
    })
 }
