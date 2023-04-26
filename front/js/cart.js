@@ -180,18 +180,15 @@ function checkFormulaire(contactObject){
     // initialiser variable isError a false
     let isError = false;
     // ----- Regex -----
-    // format email (pour le champ email)
+    let regexNotEmpty = /^.+$/; // le champ est non vide
+    let regexNotNumber = /^\D*$/;// le champ name n'est pas un nombre
+    let regexTwoCaract = /^.{2,}$/;// le champ contient au moins 2 caractères (écriture pour "non vide" : /^.+$/)
+    let regexThreeCaract = /^.{3,}$/; // le champ contient au moins 3 caractères    
     let regexEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/; //1er groupe ne contient pas @ ni d'espace puis arobase et second groupe avant le point ne contient pas @ ni d'espace puis point et dernier groupe ne contient pas @ ni d'espace
-    // le champ contient au moins 2 caractères (écriture pour "non vide" : /^.+$/)
-    let regexTwoCaract = /^.{2,}$/;
-    // le champ contient au moins 3 caractères
-    let regexThreeCaract = /^.{3,}$/;    
-    // le champ name n'est pas un nombre
-    let regexNotNumber = /^\D*$/;
     //----- conditions de vérification -----
     // si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
     if(!regexTwoCaract.test(contactObject.firstName)){
-        firstNameError.innerText = "* Merci de renseigner ce champ";
+        firstNameError.innerText = "* Champs obligatoire, Merci de renseigner";
         isError = true;
     }else if (!regexNotNumber.test(contactObject.firstName)) {
         firstNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
@@ -201,7 +198,7 @@ function checkFormulaire(contactObject){
     }
     
     if(!regexTwoCaract.test(contactObject.lastName)){
-        lastNameError.innerText = "* Merci de renseigner ce champ";
+        lastNameError.innerText = "* Champs obligatoire, Merci de renseigner";
         isError = true;
     }else if (!regexNotNumber.test(contactObject.lastName)) {
         lastNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
@@ -211,20 +208,23 @@ function checkFormulaire(contactObject){
     }
 
     if(!regexThreeCaract.test(contactObject.address)){
-        addressError.innerText = "* Merci de renseigner ce champ";
+        addressError.innerText = "* Champs obligatoire, Merci de renseigner";
         isError = true;
     }else{
         addressError.innerText = "";
     }
 
     if(!regexThreeCaract.test(contactObject.city)){
-        cityError.innerText = "* Merci de renseigner ce champ";
+        cityError.innerText = "* Champs obligatoire, Merci de renseigner";
         isError = true;
     }else{
         cityError.innerText = "";
     }
 
-    if(!regexEmail.test(contactObject.email)){
+    if (!regexNotEmpty.test(contactObject.email)) {
+        emailError.innerText = "* Champs obligatoire, Merci de renseigner";
+        isError = true;
+    }else if(!regexEmail.test(contactObject.email)){
         emailError.innerText = "adresse email invalide, merci de vérifier votre saisie";
         isError = true;
     }else{
