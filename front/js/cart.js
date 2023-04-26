@@ -193,8 +193,21 @@ function checkFormulaire(contactObject){
     if(!regexTwoCaract.test(contactObject.firstName)){
         firstNameError.innerText = "* Merci de renseigner ce champ";
         isError = true;
+    }else if (!regexNotNumber.test(contactObject.firstName)) {
+        firstNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
+        isError = true;
     }else{//pour vider le champ erreur en cas de resaisie correcte
         firstNameError.innerText = "";
+    }
+    
+    if(!regexTwoCaract.test(contactObject.lastName)){
+        lastNameError.innerText = "* Merci de renseigner ce champ";
+        isError = true;
+    }else if (!regexNotNumber.test(contactObject.lastName)) {
+        lastNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
+        isError = true;
+    }else{
+        lastNameError.innerText = "";
     }
 
     if(!regexThreeCaract.test(contactObject.address)){
@@ -211,13 +224,6 @@ function checkFormulaire(contactObject){
         cityError.innerText = "";
     }
 
-    if(!regexNotNumber.test(contactObject.lastName) || !regexTwoCaract.test(contactObject.lastName)){
-        lastNameError.innerText = "Champ vide ou invalide, merci de vérifier votre saisie";
-        isError = true;
-    }else{
-        lastNameError.innerText = "";
-    }
-    
     if(!regexEmail.test(contactObject.email)){
         emailError.innerText = "adresse email invalide, merci de vérifier votre saisie";
         isError = true;
