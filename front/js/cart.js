@@ -178,7 +178,7 @@ function checkFormulaire(contactObject){
     const cityError = document.getElementById("cityErrorMsg");
     const emailError = document.getElementById("emailErrorMsg");
     // initialiser variable isError a false
-    let isError = false;
+    let isErrorForm = false;
     // ----- Regex -----
     let regexNotEmpty = /^.+$/; // le champ est non vide
     let regexNotNumber = /^\D*$/;// le champ name n'est pas un nombre
@@ -189,51 +189,59 @@ function checkFormulaire(contactObject){
     // si il y a une erreur sur un des champs, faire afficher un message d'erreur en dessous du champ
     if(!regexTwoCaract.test(contactObject.firstName)){
         firstNameError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isError = true;
+        isErrorForm = true;
     }else if (!regexNotNumber.test(contactObject.firstName)) {
         firstNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
-        isError = true;
+        isErrorForm = true;
     }else{//pour vider le champ erreur en cas de resaisie correcte
         firstNameError.innerText = "";
     }
     
     if(!regexTwoCaract.test(contactObject.lastName)){
         lastNameError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isError = true;
+        isErrorForm = true;
     }else if (!regexNotNumber.test(contactObject.lastName)) {
         lastNameError.innerText = "* Ce champs ne doit pas comporter de chiffre, merci de rectifier";
-        isError = true;
+        isErrorForm = true;
     }else{
         lastNameError.innerText = "";
     }
 
     if(!regexThreeCaract.test(contactObject.address)){
         addressError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isError = true;
+        isErrorForm = true;
     }else{
         addressError.innerText = "";
     }
 
     if(!regexThreeCaract.test(contactObject.city)){
         cityError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isError = true;
+        isErrorForm = true;
     }else{
         cityError.innerText = "";
     }
 
     if (!regexNotEmpty.test(contactObject.email)) {
         emailError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isError = true;
+        isErisErrorFormror = true;
     }else if(!regexEmail.test(contactObject.email)){
         emailError.innerText = "adresse email invalide, merci de vérifier votre saisie";
-        isError = true;
+        isErrorForm = true;
     }else{
         emailError.innerText = "";
     }
 
-    return isError;
+    return isErrorForm;
 }
-
+//----- vérification de présence d'un panier ou d'un panier vide -----
+function checkCart(){
+    let isErrorCart = false;
+    if (!localStorage.getItem('cart') || localStorage.getItem('cart') === '[]') {
+        isErrorCart = true
+        alert(`Votre panier est vide. Merci d'ajouter des articles avant de passer commande`)
+    }
+    return isErrorCart;
+}
 //_________ Bouton Commander _________
 // séléction du html du bouton
 const boutonCommande = document.querySelector("#order");
@@ -244,12 +252,12 @@ boutonCommande.addEventListener("click", function (event){
     event.preventDefault();
     //récupération données (cf function)
     let contactObject = contactValues(); 
-    //vérification de la saisie (cf function)
-    let isError = checkFormulaire(contactObject);
-
-    //console.log("test",isError);
+    //vérification de la saisie du formulaire (cf function)
+    let isErrorForm = checkFormulaire(contactObject);
+    //vérification de la présence d'un panier
+    let isErrorCart = checkCart();
     // conditionnelle : si isError === false alors reste du traitement
-    if (!isError){ /*s'il n'y a pas d'erreur*/
+    if (!isErrorCart && !isErrorForm){ /*s'il n'y a pas d'erreur*/
         // récupérer le localstorage 
         const cart = JSON.parse(localStorage.getItem('cart'));
         // Création objet contact (incluant contactObject et ID des articles du panier "cart")
@@ -257,11 +265,9 @@ boutonCommande.addEventListener("click", function (event){
             contact: contactObject,
             products: [...cart.map(product => product.id)]
         };
-        // console.log( typeof cart)
-        // console.log('contact',contact)
-        
+       
         //envoi des informations de la commande à l'API pour retour du n° de commande
-        fetch("http://localhost:3000/api/products/order", {
+        fetch(urlApi + "/order", {
             headers:{
                 "Accept": "application/json",
                 "Content-Type": "application/json"
@@ -275,21 +281,11 @@ boutonCommande.addEventListener("click", function (event){
             console.log('order', order);
             // récupération de l'orderid de la commande renvoyé par le back
             let orderId = order.orderId;
-            // console.log(orderId);
-            // on fait une redirection vers la page confirmation avec dans l'url l'orderId qu'on a récupéré (comme page product)
-            const cartUrl = window.location.href;
-            const urlConfirmationOrder = cartUrl.replace(`cart.html`, `confirmation.html?order=${orderId}`);
-            // console.log(cartUrl);
-            // console.log(urlConfirmationOrder);
-
-            //redirection vers la page de confirmation de commande
-            window.location.href = urlConfirmationOrder;
-
             // vide le localstorage
             localStorage.clear();
+            //redirection vers la page de confirmation de commande
+            window.location.href = `confirmation.html?order=${orderId}`;
 
-            // on récupère cet id et on le fait afficher sur la page confirmation
-            //voir page confirmation.js
         })
         .catch (error=>console.log(error));
     }

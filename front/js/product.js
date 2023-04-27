@@ -58,7 +58,7 @@ boutonPanier.addEventListener("click", function (){
         // console.log('error color');
     }
     // SI quantité est a 0 on affiche un message d'alerte
-    if (parseInt(selectedQuantity) ===  0 || selectedQuantity === '') {
+    if (parseInt(selectedQuantity) < 1 || selectedQuantity === '') {
         isError = true;
         return alert(`Veuillez sélectionner votre quantité`);
         // console.log('error qte');
