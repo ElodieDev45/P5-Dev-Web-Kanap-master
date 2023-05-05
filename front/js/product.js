@@ -38,7 +38,6 @@ fetch(apiProduct)
         selectColor.appendChild(colorOption);
     }
 })
-
 //________ Bouton "Ajouter au panier" (export des données)________
 const boutonPanier = document.querySelector("#addToCart");
 //événement de clic sur boutonPanier
@@ -47,7 +46,6 @@ boutonPanier.addEventListener("click", function (){
     const selectedQuantity = document.querySelector(`#quantity`).value;
     //creation constante erreur
     let isError = false;
-
     // SI couleur est vide : message d'alerte
     if (selectedColor === '') {
         isError = true;
@@ -67,9 +65,7 @@ boutonPanier.addEventListener("click", function (){
             quantity: parseInt(selectedQuantity),
             id: paramsId
         }
-        
         let isInCart = false;
-        
         // Boucle sur le tableau (ou on utilise la méthode .find) pour vérifier
         cart.forEach((item,index) => {
             // si produit EXISTE dans le tableau avec la meme id et meme couleur
@@ -79,16 +75,13 @@ boutonPanier.addEventListener("click", function (){
                 isInCart = true
             }
         });
-    
         // SI IL N'EXISTE PAS dans le tableau
         // Ajout du produit complet au tableau
         if(!isInCart){
             cart.push(cartItem);
         }
-    
         localStorage.setItem('cart',JSON.stringify(cart))
         // (redirection vers la page caddie)
-
         window.alert(`Votre article à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
     }
 })
