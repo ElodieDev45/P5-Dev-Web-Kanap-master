@@ -12,11 +12,12 @@ async function fetchData(){
 //________ affichage des produits ________
 function displayDatas(productsList){
     console.table(productsList);
+    //----- Constitution du DOM -----
     // définition de la section parent
     const sectionItems = document.querySelector("#items");
-
+    
     productsList.forEach(product => {
-        // création de l'élément a
+        // création de l'élément a (lien vers la page de l'aricle)
         const elementA = document.createElement("a");
         elementA.href = "./product.html?id=" + product._id;
         // création de l'élément article
