@@ -81,7 +81,7 @@ boutonPanier.addEventListener("click", function (){
             cart.push(cartItem);
         }
         localStorage.setItem('cart',JSON.stringify(cart))
-        // (redirection vers la page caddie)
+        // affichage d'un message de confirmation d'ajout au panier
         window.alert(`Votre article à bien été ajouté à votre panier : \n couleur : ${cartItem.color} \n quantité : ${cartItem.quantity}`);
     }
 })
