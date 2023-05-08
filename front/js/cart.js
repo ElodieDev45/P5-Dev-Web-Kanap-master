@@ -223,7 +223,7 @@ function checkFormulaire(contactObject){
 
     if (!regexNotEmpty.test(contactObject.email)) {
         emailError.innerText = "* Champs obligatoire, Merci de renseigner";
-        isErisErrorFormror = true;
+        isErrorForm = true;
     }else if(!regexEmail.test(contactObject.email)){
         emailError.innerText = "adresse email invalide, merci de vérifier votre saisie";
         isErrorForm = true;
